@@ -1,0 +1,75 @@
+Printer PAK Tool (PAKTOOL)
+Version 30.904
+
+
+EXPLANATION
+
+PAKTOOL is a PostScript driver PAK file analysis/disassembly tool.
+
+The OS/2 PostScript printer drivers (whether the original PSCRIPT.DRV, or 
+ECUPS/ECUPS-HP or PSPRINT) store all information about supported printer
+devices (models) in a pair of data files that reside in the same directory as
+the driver itself:
+ - PRINTER1.PAK contains all devices that were originally built into the driver
+   at compile time.
+ - AUXPRINT.PAK contains all devices that have been imported by the user from
+   PPD files, using the PIN utility.
+
+PAKTOOL, simply put, is a command-line utility for analyzing and selectively
+decompiling these PAK files.
+
+When run on the specified PAK file, PAKTOOL can do any of the following:
+ - List all printer devices defined in the PAK file
+ - Dump the binary PAKfile data for the specified printer in raw and/or
+   hexadecimal format.
+ - Display the PAKfile data for the specified printer in human-readable format. 
+ - "Decompile" the specified printer's data into a PPD file.
+
+Unfortunately, the PAK file format is dependent on the PostScript driver, and
+is slightly different depending on which specific driver is being examined.
+Therefore, three different executables are provided, each one built for use
+with a particular PostScript driver:
+
+ epaktool.exe    For ECUPS/ECUPS-HP.DRV, or IBM's PSCRIPT.DRV version 30.800
+ ipaktool.exe    For IBM's PSCRIPT.DRV, version 30.822 and later
+ ppaktool.exe    For PSPRINT.DRV
+
+Basically, the ECUPS* drivers are built from the IBM DDK sources, which are
+based on PSCRIPT.DRV version 30.800.  Later versions of PSCRIPT.DRV (for which
+no source code is available) changed the internal structures slightly.  (I had
+to use a lot of trial-and-error analysis to work out where the changes were.)
+PSPRINT.DRV is also based on the 30.800 sources, but makes its own particular
+changes to the internal structures.
+
+
+
+USAGE:
+
+  epaktool <pakfile> [<action> ["<printer name>"] ]
+  ipaktool <pakfile> [<action> ["<printer name>"] ]
+  ppaktool <pakfile> [<action> ["<printer name>"] ]
+
+where
+ <pakfile> is either PRINTER1.PAK or AUXPRINT.PAK;
+ <action> is one of the following:
+   L - List all defined printers (this is the default if nothing is specified).
+
+   P - Generate PPD file for <printer name>
+   V - Display data about <printer name>, shown according to the internal data.
+       structures used.
+   R - Display data about <printer name> in a format optimized for readability.
+
+   D - Dump all <printer name>'s data as raw bytes.
+   X - Dump all <printer name>'s data as hexadecimal byte values.
+   B - Dump all <printer name>'s data in a combined table format.
+
+If <printer name> is not specified (all actions except L), then the first 
+printer found in <pakfile> will be assumed.
+
+All output goes to STDOUT; generally, you will want to redirect this to a file.
+
+Running the program with no arguments will display brief help.
+
+
+
+Source code is included.  PAKTOOL is released to the public domain.
